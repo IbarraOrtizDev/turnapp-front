@@ -17,7 +17,7 @@ jobs:
           echo "Image turnappfront:lts does not exist"
         fi
     - name: Deploy Dockerfile
-      run: docker build -f ./API/Core.Api/Dockerfile . -t turnappfront:lts --no-cache
+      run: docker build -f ./Dockerfile . -t turnappfront:lts --no-cache
     - name: Delete container if exist
       run: docker rm -f turnappfront
     - name: Crear el contenedor
