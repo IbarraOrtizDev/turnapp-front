@@ -13,3 +13,23 @@
 .gap-3 {
     gap: 0.75rem;
 }
+.rounded {
+    border-radius: 0.25rem;
+}
+
+.text-1 {
+    font-size: 0.75rem;
+}
+.text-2 {
+    font-size: 0.875rem;
+}
+.text-3 {
+    font-size: 1rem;
+}
+.text-4 {
+    font-size: 1.125rem;
+}
+
+.border-1 {
+    border: 1px solid #bfbfbf;
+}

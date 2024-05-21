@@ -16,7 +16,7 @@ export default defineNuxtConfig({
       },
     },
     plugins: [
-      'Notify',
+      'Notify', 'Screen'
     ],
   },
   runtimeConfig: {

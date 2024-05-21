@@ -1,6 +1,8 @@
 
 interface _GlobalComponents {
-      'CardStatusAwait': typeof import("../components/CardStatusAwait.vue")['default']
+      'CalendarioCitas': typeof import("../components/CalendarioCitas.vue")['default']
+    'CardStatusAwait': typeof import("../components/CardStatusAwait.vue")['default']
+    'LateralCita': typeof import("../components/LateralCita.vue")['default']
     'ListCompany': typeof import("../components/ListCompany.vue")['default']
     'StatusAppointment': typeof import("../components/StatusAppointment.vue")['default']
     'NuxtWelcome': typeof import("../node_modules/@nuxt/ui-templates/dist/templates/welcome.vue")['default']
@@ -147,7 +149,9 @@ interface _GlobalComponents {
     'Head': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Head']
     'Html': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']
     'Body': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
-      'LazyCardStatusAwait': typeof import("../components/CardStatusAwait.vue")['default']
+      'LazyCalendarioCitas': typeof import("../components/CalendarioCitas.vue")['default']
+    'LazyCardStatusAwait': typeof import("../components/CardStatusAwait.vue")['default']
+    'LazyLateralCita': typeof import("../components/LateralCita.vue")['default']
     'LazyListCompany': typeof import("../components/ListCompany.vue")['default']
     'LazyStatusAppointment': typeof import("../components/StatusAppointment.vue")['default']
     'LazyNuxtWelcome': typeof import("../node_modules/@nuxt/ui-templates/dist/templates/welcome.vue")['default']
@@ -308,7 +312,9 @@ declare module 'vue' {
   export interface GlobalComponents extends _GlobalComponents { }
 }
 
+export const CalendarioCitas: typeof import("../components/CalendarioCitas.vue")['default']
 export const CardStatusAwait: typeof import("../components/CardStatusAwait.vue")['default']
+export const LateralCita: typeof import("../components/LateralCita.vue")['default']
 export const ListCompany: typeof import("../components/ListCompany.vue")['default']
 export const StatusAppointment: typeof import("../components/StatusAppointment.vue")['default']
 export const NuxtWelcome: typeof import("../node_modules/@nuxt/ui-templates/dist/templates/welcome.vue")['default']
@@ -455,7 +461,9 @@ export const Style: typeof import("../node_modules/nuxt/dist/head/runtime/compon
 export const Head: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Head']
 export const Html: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']
 export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
+export const LazyCalendarioCitas: typeof import("../components/CalendarioCitas.vue")['default']
 export const LazyCardStatusAwait: typeof import("../components/CardStatusAwait.vue")['default']
+export const LazyLateralCita: typeof import("../components/LateralCita.vue")['default']
 export const LazyListCompany: typeof import("../components/ListCompany.vue")['default']
 export const LazyStatusAppointment: typeof import("../components/StatusAppointment.vue")['default']
 export const LazyNuxtWelcome: typeof import("../node_modules/@nuxt/ui-templates/dist/templates/welcome.vue")['default']
