@@ -1,1 +1,0 @@
-import{x as s,s as t,c,o as a}from"./CsrzELu6.js";const p={__name:"index",setup(o){s();const e=t();return(e.currentRoute.value.path==="/access/"||e.currentRoute.value.path==="/access")&&e.push("/access/login"),(r,u)=>(a(),c("div"))}};export{p as default};
