@@ -9,7 +9,7 @@ definePageMeta({
 const route = useRoute()
 const router = useRouter()
 
-if(router.currentRoute.value.path === '/access/'){
+if(router.currentRoute.value.path === '/access/' || router.currentRoute.value.path === '/access'){
     router.push('/access/login')
 }
 

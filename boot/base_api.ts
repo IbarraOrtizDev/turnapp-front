@@ -1,0 +1,1 @@
+export const base_api = "http://64.23.245.70:8080";

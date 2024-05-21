@@ -19,6 +19,9 @@ export default defineNuxtConfig({
       'Notify',
     ],
   },
+  runtimeConfig: {
+    baseUrl: 'http://64.23.245.70:8080'
+  },
   css: [
     '~/assets/index.css'
   ],
