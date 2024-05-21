@@ -1,9 +1,9 @@
 <template>
-  <section class="q-pt-xl" style="display: grid; grid-template-columns: 1fr 50px;max-width: 400px;margin:10px auto; gap:2px">
+  <section class="q-pt-xl q-pb-lg" style="display: grid; grid-template-columns: 1fr 50px;max-width: 600px;margin:10px auto; gap:2px">
     <q-input outlined v-model="text"  type="text" label="Buscar compañías" class="bg-white" />
     <q-btn icon="search" flat color="primary" />
   </section>
-  <section class="bg-white q-pa-md flex gap-3 justify-center" style="min-height: 200px;">
+  <section class="q-pa-md flex gap-5 justify-center" style="min-height: 200px;">
     
     <q-card v-for="suc in filtrar()" class="my-card q-pa-xs" style=" width: 100%;max-width: 300px;">
       <div>
@@ -19,6 +19,9 @@
           <q-icon name="phone" class="q-mr-xs" />
           {{ suc.celular }}</div>
       </q-card-section>
+      <q-card-actions align="right">
+        <q-btn @click="viewCalendar(suc.id)" flat round color="primary" icon="event" />
+      </q-card-actions>
     </q-card>
   </section>
 </template>
@@ -148,7 +151,12 @@ const sucursales = ref<Sucursal[]>([
     usuario_por_dia: 10
   }
 ])
+const router = useRouter()
 
+const viewCalendar = (id:number)=>
+{
+  router.push('/cita/'+id)
+}
 const filtrar = () => {
   return sucursales.value.filter((suc: Sucursal) => {
     return suc.nombre.toLowerCase().includes(text.value.toLowerCase());

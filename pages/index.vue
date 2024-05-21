@@ -1,7 +1,5 @@
 <template>
-    <q-page class="q-mt-md q-pa-lg">
-        <div class="text-h6 text-center q-pb-sm">Mis Citas en Proceso</div>
-      <StatusAppointment />
+    <q-page class="q-pa-lg">
       <ListCompany />
     </q-page>
   </template>

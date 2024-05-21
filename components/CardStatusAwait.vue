@@ -35,11 +35,17 @@
           </q-item-label>
         </q-item-section>
         </section>
-      <q-linear-progress indeterminate color="primary" />
+      <q-linear-progress v-if="props.loading" indeterminate color="primary" />
       </q-card>
     </q-card-section>
 </template>
-<script>
+<script setup>
+const props = defineProps({
+  loading: {
+    type: Boolean,
+    default: false
+  }
+})
 </script>
 <style lang="">
     

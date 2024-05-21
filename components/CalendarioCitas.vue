@@ -4,7 +4,7 @@
             <div id="controls" class="flex align-center items-center gap-2">
                 <q-btn color="primary" flat round icon="chevron_left" @click="prevMonth" />
                 <q-btn color="primary" flat round icon="chevron_right" @click="nextMonth" />
-                <div v-if="$q.screen.width > 550"  class="text-subtitle1 text-4">{{mesesAnio[mesSelected]}} {{anioSelected}} </div>
+                <div v-if="$q.screen.width > 500"  class="text-subtitle1 text-4">{{mesesAnio[mesSelected]}} {{anioSelected}} </div>
             </div>
             <q-input outlined v-model="fechaSelected" mask="date" :rules="['date']" label="Fecha *" readonly
           @click="openDatePopup" style="padding:0px">
@@ -25,13 +25,27 @@
         </div>
         <div>
             <section v-if="$q.screen.width > 550" class="grid-calendar">
-                <div class="text-center self-center" v-for="dia  in diasSemana" :key={dia}>{{dia}}</div>
+                <div class="text-center self-center sibtitle-1" v-for="dia  in diasSemana" :key={dia}><b>{{dia}}</b></div>
             </section>
             <section v-else class="grid-calendar">
-                <div class="text-center self-center" v-for="dia  in diasSemanaCorto" :key={dia}>{{dia}}</div>
+                <div class="text-center self-center sibtitle-1" v-for="dia  in diasSemanaCorto" :key={dia}><b>{{dia}}</b></div>
             </section>
             <section class="grid-calendar">
-                <div  v-for="dia in diasMes"  :class="dia != '' ? 'text-center q-pt-xs border-1' : 'text-center q-pt-xs'":key={dia}>{{dia}}</div>
+                <q-item v-ripple="!(new Date(`${anioSelected}-${mesSelected+1}-${dia}`).getTime() < hoy.getTime())" :clickable="!(new Date(`${anioSelected}-${mesSelected+1}-${dia}`).getTime() < hoy.getTime())" v-for="dia in diasMes"  
+                :class="dia != '' ? new Date(`${anioSelected}-${mesSelected+1}-${dia}`).getTime() == hoy.getTime() ? 'border-1 bg-secondary' : 'border-1': ''" 
+                :key={dia} @click="separarEspacio(dia)">
+                    <q-item-section style="flex-wrap:nowrap" v-if="dia != ''">
+                        <div>
+                            {{dia}}
+                        </div>
+                        <q-chip class="center-chip">
+                            {{dia}}
+                            <q-tooltip>
+                                Hay 32 turnos disponibles
+                            </q-tooltip>
+                        </q-chip>
+                    </q-item-section>
+                </q-item>
             </section>
         </div>
     </q-card>
@@ -45,6 +59,7 @@ const diasMes = ref<string[]>([]);
 const datePopup = ref(false)
 const mesSelected = ref<number>(0);
 const anioSelected = ref<number>(0);
+const hoy = new Date(`${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`);
 const $q = useQuasar();
 
 const obtenerUltimoDiaMes = () => {
@@ -66,6 +81,29 @@ const obtenerUltimoDiaMes = () => {
     for(let i = 0; i < diaInicioSemana; i++){
         diasMes.value.unshift('');
     }
+}
+
+const isLeft = (dia: string) => {
+    if(dia == '' || (new Date(`${anioSelected.value}-${mesSelected.value+1}-${dia}`).getTime() < hoy.getTime() )){
+        return true;
+    }
+    return false;
+}
+
+const separarEspacio = (dia: string) => {
+    if(isLeft(dia)){
+        return;
+    }
+    $q.dialog({
+        title: 'Turnos disponibles',
+        message: 'Para el dia hay 32 turnos disponibles y debes estar en el logur a las 10:30. ¿Desea reservar uno?',
+        ok: 'Aceptar',
+        cancel: 'Cancelar'
+    }).onOk(() => {
+        console.log('OK')
+    }).onCancel(() => {
+        console.log('Cancel')
+    })
 }
 
 const openDatePopup = (e:any)=> {
@@ -96,7 +134,9 @@ onMounted(() => {
 .grid-calendar {
     display: grid;
     grid-template-columns: repeat(7, minmax(10px, 1fr));
-    grid-auto-rows: 70px;
+    grid-auto-rows: 90px;
 }
-
+.center-chip>div{
+    justify-content: center;
+}
 </style>

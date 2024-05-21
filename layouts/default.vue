@@ -35,10 +35,18 @@
       <q-list>
         <q-item clickable v-ripple>
           <q-item-section avatar>
-            <q-icon name="login" class="text-primary" />
+            <q-icon name="home" class="text-primary" />
           </q-item-section>
           <q-item-section>
-            <NuxtLink href="/access/login" class="q-ml-md no-decoration text-grey-10">Login</NuxtLink>
+            <NuxtLink href="/" class="q-ml-md no-decoration text-grey-10">Inicio</NuxtLink>
+          </q-item-section>
+        </q-item>
+        <q-item clickable v-ripple>
+          <q-item-section avatar>
+            <q-icon name="event" class="text-primary" />
+          </q-item-section>
+          <q-item-section>
+            <NuxtLink href="/cita" class="q-ml-md no-decoration text-grey-10">Citas</NuxtLink>
           </q-item-section>
         </q-item>
         <!-- Agrega más elementos de menú aquí -->

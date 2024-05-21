@@ -1,7 +1,12 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import type { StatusApploinment } from '~/interfaces/StatusApploinment';
-
+const props = defineProps({
+  loading: {
+    type: Boolean,
+    required: false
+  }
+})
 const citas = ref<StatusApploinment[]>([
   {
     id: 1,
@@ -65,7 +70,7 @@ const slide = ref(0);
   >
     <q-carousel-slide v-for="(itm,index) in dividir"  :name="index" class="column no-wrap justify-center" style="align-items: center;" >
       <div class="row wrap" style="flex-wrap: nowrap; width: 100%;">
-        <card-status-await v-for="it in itm" class="col-6" />
+        <card-status-await :loading="props.loading" v-for="it in itm" class="col-6" />
       </div>
     </q-carousel-slide>
   </q-carousel>
