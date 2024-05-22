@@ -1,8 +1,61 @@
 <template>
-    <q-page padding class="q-mx-md">
-        <h5>Usuarios</h5>
+    <q-page padding class="q-ma-md">
+        <!-- <section class="flex justify-center gap-5">
+          <section v-for="suc in usuarios">
+            <q-card class="my-card q-pa-xs" style=" width: 100%;max-width: 300px;">
+              <q-card-section>
+                <div class="text-h6"><b>Nombre: </b>{{ suc.id_usuario.first_name }} {{ suc.id_usuario.last_name }}</div>
+                <div class="text-subtitle2">
+                  <b>Correo: </b>{{ suc.id_usuario.email }}
+                </div>
+                <div class="text-caption">
+                  <b>Usuario: </b>{{ suc.id_usuario.username }}
+                </div>
+                <div class="text-caption">
+                  <b>Cargo: </b>{{ suc.cargo }}
+                </div>
+                <div class="text-caption">
+                  <b>Especialidad: </b>{{ suc.especialidad }}
+                </div>
+              </q-card-section>
+            </q-card>
+          </section>
+        </section> -->
         <section>
-            
+            <q-table
+            title="Colaboradores"
+                :columns="headers"
+                :rows="usuarios"
+                row-key="id"
+                wrap-cells
+                no-data-label="No hay datos"
+            >
+                <template v-slot:body-cell-name="props">
+                    <q-td :props="props">
+                        {{ props.row.id_usuario.first_name }} {{ props.row.id_usuario.last_name }}
+                    </q-td>
+                </template>
+                <template v-slot:body-cell-username="props">
+                    <q-td :props="props">
+                        {{ props.row.id_usuario.username }}
+                    </q-td>
+                </template>
+                <template v-slot:body-cell-email="props">
+                    <q-td :props="props">
+                        {{ props.row.id_usuario.email }}
+                    </q-td>
+                </template>
+                <template v-slot:body-cell-cargo="props">
+                    <q-td :props="props">
+                        {{ props.row.cargo }}
+                    </q-td>
+                </template>
+                <template v-slot:body-cell-especialidad="props">
+                    <q-td :props="props">
+                        {{ props.row.especialidad }}
+                    </q-td>
+                </template>
+            </q-table>
         </section>
         <q-dialog v-model="alert" persistent>
             <q-card style="max-width:500px;width:100%">
@@ -47,7 +100,6 @@
             <q-btn fab icon="add" color="primary" @click="openModal" />
             <q-tooltip anchor="bottom middle" self="top middle">Agregar Colaborador</q-tooltip>
         </q-page-sticky>
-        <pre>{{createUserInfor}}</pre>
     </q-page>
 </template>
 <script lang="ts" setup>
@@ -57,13 +109,63 @@ import type { Sucursal } from '~/interfaces/Sucursal';
 import type { ISelect } from '~/interfaces/ISelect';
 import { useQuasar } from 'quasar';
 import { postGenericServices } from '~/services/genericServices';
+import type { Usuario } from '~/interfaces/Usuario';
+import type { Column } from '~/interfaces/Columns';
 const alert = ref(false);
 const $q = useQuasar();
 const router = useRouter();
 const sucursales = ref<ISelect[]>([]);
+const usuarios = ref<Usuario[]>([]);
 const roles = [
     {label: 'Administrador', value: 'Admin'},
     {label: 'Medico', value: 'Medico'}
+]
+const headers : Column[]= [
+    {
+        name: 'name',
+        required: true,
+        label: 'Nombre',
+        align: 'left',
+        field: 'id_usuario.first_name',
+        format: (val: any) => `${val}`,
+        sortable: true,
+    },
+    {
+        name: 'username', 
+        required: true,
+        label: 'Usuario',
+        align: 'left',
+        field: 'id_usuario.username',
+        format: (val: any) => `${val}`,
+        sortable: true,
+    },
+    {
+        name: 'email',
+        required: true,
+        label: 'Correo',
+        align: 'left',
+        field: 'id_usuario.email',
+        format: (val: any) => `${val}`,
+        sortable: true,
+    },
+    {
+        name: 'cargo',
+        required: true,
+        label: 'Cargo',
+        align: 'left',
+        field: 'cargo',
+        format: (val: any) => `${val}`,
+        sortable: true,
+    },
+    {
+        name: 'especialidad',
+        required: true,
+        label: 'Especialidad',
+        align: 'left',
+        field: 'especialidad',
+        format: (val: any) => `${val}`,
+        sortable: true,
+    }
 ]
 const createUserInfor = reactive({
     username: '',
@@ -81,8 +183,9 @@ const createUserInfor = reactive({
 const openModal = () => {
     alert.value = true
 }
-onMounted(() => {
-  listSucursales()
+onMounted(async () => {
+  await listSucursales()
+  await listEmpleados()
     console.log('Usuarios')
 })
 
@@ -118,7 +221,26 @@ const listSucursales = async () => {
   })  || [];
 }
 
-const listEmpleados = ()=>{
+const listEmpleados = async ()=>{
+  $q.loading.show();
+  const response = await getGenericServices<Usuario>('empleados')
+  $q.loading.hide();
+  if(response.status === 401){
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    router.push('/access/login')
+    return;
+  }
+  if(response.status !== 200){
+    $q.notify({
+      color: 'red',
+      message: 'Error al cargar los usuarios',
+      position: 'top'
+    })
+  }
+  usuarios.value = response.data || [];
+
+  console.log(usuarios.value)
 
 }
 
@@ -206,6 +328,7 @@ const createEmploye= async () => {
     }finally{
       $q.loading.hide();
     }
+    await listEmpleados()
   }
 const passwordSecurity = () => {
   if(createUserInfor.password != createUserInfor.validate_password){
