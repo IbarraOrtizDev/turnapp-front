@@ -43,6 +43,48 @@ export async function getGenericServices<T>(url = '') : Promise<GenericServicesR
     }
 }
 
+export async function getGenericServicesById<T>(url:string) : Promise<GenericServicesResponse<T>> {
+    try {
+        const token = localStorage.getItem('token');
+        if(!token){
+            return {
+                status: 401,
+                data: null
+            }
+        }
+        const response = await fetch(base_api + '/' + url, {
+            method: 'GET',
+            headers:{
+                "Authorization": "Token " + token
+            }
+        });
+        if(response.status === 401){
+            return {
+                status: 401,
+                data: null
+            }
+        }
+
+        if(response.status !== 200){
+            return {
+                status: response.status,
+                data: null
+            }
+        }
+
+        const data = await response.json();
+        return {
+            status: response.status,
+            dataOnly: data
+        }
+    } catch (error) {
+        return {
+            status: 500,
+            data: null
+        }
+    }
+}
+
 export async function postGenericServices<T>(url = '', body = {}) : Promise<GenericServicesResponse<T>> {
     try {
         const token = localStorage.getItem('token');

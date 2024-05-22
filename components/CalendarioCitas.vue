@@ -61,6 +61,7 @@ const mesSelected = ref<number>(0);
 const anioSelected = ref<number>(0);
 const hoy = new Date(`${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`);
 const $q = useQuasar();
+const emit = defineEmits(['separarEspacio']);
 
 const obtenerUltimoDiaMes = () => {
     const fixParseFecha = new Date(fechaSelected.value);
@@ -94,16 +95,11 @@ const separarEspacio = (dia: string) => {
     if(isLeft(dia)){
         return;
     }
-    $q.dialog({
-        title: 'Turnos disponibles',
-        message: 'Para el dia hay 32 turnos disponibles y debes estar en el logur a las 10:30. ¿Desea reservar uno?',
-        ok: 'Aceptar',
-        cancel: 'Cancelar'
-    }).onOk(() => {
-        console.log('OK')
-    }).onCancel(() => {
-        console.log('Cancel')
-    })
+    emit('separarEspacio', {
+        dia: parseInt(dia),
+        mes: mesSelected.value+1,
+        anio: anioSelected.value
+    });
 }
 
 const openDatePopup = (e:any)=> {

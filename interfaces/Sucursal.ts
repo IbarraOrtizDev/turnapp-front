@@ -5,7 +5,7 @@ export interface Sucursal {
     telefono: string;
     imagen: string;
     id_cia: number | null | undefined;
-    lues_apertura: string | null | undefined;
+    lunes_apertura: string | null | undefined;
     lunes_cierre: string | null | undefined;
     martes_apertura: string | null | undefined;
     martes_cierre: string | null | undefined;
