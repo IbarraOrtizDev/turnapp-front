@@ -74,7 +74,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="warning" v-close-popup />
-          <q-btn flat label="Crear" color="primary" v-close-popup />
+          <q-btn flat label="Crear" color="primary" @click="createSucursal" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -86,7 +86,7 @@
 <script setup>
 import { useQuasar } from 'quasar';
 import { postGenericServices } from '~/services/genericServices';
-defineEmits(['listSucursales'])
+const emit = defineEmits(['listSucursales'])
 const alert = ref(false)
 const $q = useQuasar();
 const sucursal = reactive({
@@ -109,6 +109,7 @@ const sucursal = reactive({
     domingo_apertura: '',
     domingo_cierre: '',
     tiempo_por_usuario: '',
+    usuario_por_dia: 1,
     id_cia: 1
 })
 
@@ -131,7 +132,7 @@ const createSucursal = async () => {
         return
     }
 
-    if(sucursal.lunes_apertura >= sucursal.lunes_cierre || sucursal.martes_apertura >= sucursal.martes_cierre || sucursal.miercoles_apertura >= sucursal.miercoles_cierre || sucursal.jueves_apertura >= sucursal.jueves_cierre || sucursal.viernes_apertura >= sucursal.viernes_cierre || sucursal.sabado_apertura >= sucursal.sabado_cierre || sucursal.domingo_apertura >= sucursal.domingo_cierre){
+    if(transformTime(sucursal.lunes_apertura) >= transformTime(sucursal.lunes_cierre) || transformTime(sucursal.martes_apertura) >= transformTime(sucursal.martes_cierre) || transformTime(sucursal.miercoles_apertura) >= transformTime(sucursal.miercoles_cierre) || transformTime(sucursal.jueves_apertura) >= transformTime(sucursal.jueves_cierre) || transformTime(sucursal.viernes_apertura) >= transformTime(sucursal.viernes_cierre) || transformTime(sucursal.sabado_apertura) >= transformTime(sucursal.sabado_cierre) || transformTime(sucursal.domingo_apertura) >= transformTime(sucursal.domingo_cierre)){
         $q.notify({
             color: 'red',
             message: 'La hora de apertura no puede ser mayor o igual a la hora de cierre',
@@ -141,6 +142,7 @@ const createSucursal = async () => {
     }
     $q.loading.show()
     const response = await postGenericServices('sucursales', sucursal);
+    $q.loading.hide()
     if(response.status === 401){
         localStorage.removeItem('token')
         localStorage.removeItem('user')
@@ -160,12 +162,15 @@ const createSucursal = async () => {
         message: 'Sucursal creada exitosamente',
         position: 'top'
     })
+    alert.value = false
     emit('listSucursales')
-
-    $q.loading.hide()
 }
 const openModal = () => {
     alert.value = true
+}
+const transformTime = (time) => {
+    const fechaActual = new Date().toISOString().split('T')[0]
+    return new Date(fechaActual + ' ' + time.replaceAll('.', '')).getTime()
 }
 </script>
 <style lang="">

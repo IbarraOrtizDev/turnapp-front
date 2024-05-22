@@ -1,6 +1,6 @@
 <template lang="">
   <section class="q-ma-md q-py-md">
-    <article class="flex gap-5">
+    <article class="flex gap-5 justify-center">
       <section v-for="suc in sucursales">
         <q-card class="my-card q-pa-xs" style=" width: 100%;max-width: 300px;">
           <div>
