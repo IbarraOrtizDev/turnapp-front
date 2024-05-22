@@ -49,7 +49,7 @@
             <q-item-section>Citas</q-item-section>
           </q-item>
         </NuxtLink>
-        <NuxtLink href="/sucursales" class="no-decoration text-grey-10">
+        <NuxtLink v-if="tipo_usuario != 'afiliado'" href="/sucursales" class="no-decoration text-grey-10">
           <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="local_hospital" class="text-primary" />
@@ -57,7 +57,7 @@
             <q-item-section>Sucursales</q-item-section>
           </q-item>
         </NuxtLink>
-        <NuxtLink href="/usuarios" class="no-decoration text-grey-10">
+        <NuxtLink v-if="tipo_usuario != 'afiliado'" href="/usuarios" class="no-decoration text-grey-10">
           <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="people" class="text-primary" />
@@ -77,7 +77,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 const router = useRouter()
-
+const tipo_usuario = ref('')
 const verPerfil = () => {
   router.push('/perfil')
 }
@@ -91,6 +91,16 @@ const closeSession = () => {
   localStorage.removeItem('user')
   router.push('/access/login')
 }
+
+onMounted(() => {
+  if (!localStorage.getItem('token')) {
+    router.push('/access/login')
+  }
+  const profile = localStorage.getItem('profile')
+  if(profile){
+    tipo_usuario.value = JSON.parse(profile).tipo_usuario
+  }
+})
 
 const drawerOpen = ref(false)
 </script>
