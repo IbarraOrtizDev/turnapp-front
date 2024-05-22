@@ -2,7 +2,7 @@ export interface Sucursal {
     id: number;
     nombre: string;
     direccion: string;
-    celular: string;
+    telefono: string;
     imagen: string;
     id_cia: number | null | undefined;
     lues_apertura: string | null | undefined;

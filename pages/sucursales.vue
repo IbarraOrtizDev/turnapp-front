@@ -29,8 +29,10 @@
     </q-page-sticky>
   </section>
 </template>
-<script setup>
+<script setup lang="ts">
 const alert = ref(false)
+const token = ref('')
+console.log(token)
 const columns = [
   {
     name: 'name',
