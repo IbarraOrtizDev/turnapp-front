@@ -185,7 +185,7 @@ onMounted(async () => {
     if(sucursalesQ.status === 401){
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      router.push('/login')
+      router.push('/access/login')
       return;
     }
     if(sucursalesQ.status !== 200){
