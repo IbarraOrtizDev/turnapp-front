@@ -46,6 +46,7 @@ const login = async () => {
         if(response.status === 200){
             localStorage.setItem('token', res.token)
             localStorage.setItem('user', JSON.stringify(res.user))
+            localStorage.setItem('profile', JSON.stringify(res.profile))
             router.push('/')
         }else{
             $q.notify({

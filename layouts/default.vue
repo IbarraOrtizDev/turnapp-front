@@ -33,31 +33,38 @@
     <q-drawer v-model="drawerOpen" show-if-above>
       <h6 class="q-ma-md">Menú</h6>
       <q-list>
-        <q-item clickable v-ripple @click="link('/')">
-          <q-item-section avatar><q-icon name="home" class="text-primary" /></q-item-section>
-          <q-item-section>Inicio</q-item-section>
-        </q-item>
-        <q-item clickable v-ripple @click="link('/cita')">
-          <q-item-section avatar><q-icon name="event" class="text-primary" /></q-item-section>
-          <q-item-section>Citas</q-item-section>
-        </q-item>
-        <q-item clickable v-ripple @click="link('/sucursales')">
-          <q-item-section avatar>
-            <q-icon name="local_hospital" class="text-primary" />
-          </q-item-section>
-          <q-item-section>
-            Sucursales
-          </q-item-section>
-        </q-item>
-        <q-item clickable v-ripple  @click="link('/usuarios')">
-          <q-item-section avatar>
-            <q-icon name="people" class="text-primary" />
-          </q-item-section>
-          <q-item-section>
-            Colaboradores
-          </q-item-section>
-        </q-item>
-        <!-- Agrega más elementos de menú aquí -->
+        <NuxtLink href="/" class="no-decoration text-grey-10">
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="home" class="text-primary" />
+            </q-item-section>
+            <q-item-section>Inicio</q-item-section>
+          </q-item>
+        </NuxtLink>
+        <NuxtLink href="/cita" class="no-decoration text-grey-10">
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="event" class="text-primary" />
+            </q-item-section>
+            <q-item-section>Citas</q-item-section>
+          </q-item>
+        </NuxtLink>
+        <NuxtLink href="/sucursales" class="no-decoration text-grey-10">
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="local_hospital" class="text-primary" />
+            </q-item-section>
+            <q-item-section>Sucursales</q-item-section>
+          </q-item>
+        </NuxtLink>
+        <NuxtLink href="/usuarios" class="no-decoration text-grey-10">
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="people" class="text-primary" />
+            </q-item-section>
+            <q-item-section>Colaboradores</q-item-section>
+          </q-item>
+        </NuxtLink>
       </q-list>
     </q-drawer>
 
@@ -70,15 +77,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 const router = useRouter()
-const route = useRoute();
 
 const verPerfil = () => {
   router.push('/perfil')
 }
 
 const link = (url: string) => {
-  console.log(route)
-  console.log(url)
   router.push(url)
 }
 
