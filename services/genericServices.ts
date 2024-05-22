@@ -109,7 +109,7 @@ export async function postGenericServices<T>(url = '', body = {}) : Promise<Gene
             }
         }
 
-        if(response.status !== 200){
+        if(![201,200].includes(response.status)){
             return {
                 status: response.status,
                 data: null
@@ -119,7 +119,8 @@ export async function postGenericServices<T>(url = '', body = {}) : Promise<Gene
         const data = await response.json();
         return {
             status: response.status,
-            data
+            data,
+            dataOnly: data
         }
     } catch (error) {
         return {
@@ -163,7 +164,8 @@ export async function patchGenericServices<T>(url = '', body = {}) : Promise<Gen
         const data = await response.json();
         return {
             status: response.status,
-            data
+            data,
+            dataOnly: data
         }
     } catch (error) {
         return {
