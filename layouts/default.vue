@@ -33,36 +33,28 @@
     <q-drawer v-model="drawerOpen" show-if-above>
       <h6 class="q-ma-md">Menú</h6>
       <q-list>
-        <q-item clickable v-ripple>
-          <q-item-section avatar>
-            <q-icon name="home" class="text-primary" />
-          </q-item-section>
-          <q-item-section>
-            <NuxtLink href="/" class="q-ml-md no-decoration text-grey-10">Inicio</NuxtLink>
-          </q-item-section>
+        <q-item clickable v-ripple @click="link('/')">
+          <q-item-section avatar><q-icon name="home" class="text-primary" /></q-item-section>
+          <q-item-section>Inicio</q-item-section>
         </q-item>
-        <q-item clickable v-ripple>
-          <q-item-section avatar>
-            <q-icon name="event" class="text-primary" />
-          </q-item-section>
-          <q-item-section>
-            <NuxtLink href="/cita" class="q-ml-md no-decoration text-grey-10">Citas</NuxtLink>
-          </q-item-section>
+        <q-item clickable v-ripple @click="link('/cita')">
+          <q-item-section avatar><q-icon name="event" class="text-primary" /></q-item-section>
+          <q-item-section>Citas</q-item-section>
         </q-item>
-        <q-item clickable v-ripple>
+        <q-item clickable v-ripple @click="link('/sucursales')">
           <q-item-section avatar>
             <q-icon name="local_hospital" class="text-primary" />
           </q-item-section>
           <q-item-section>
-            <NuxtLink href="/sucursales" class="q-ml-md no-decoration text-grey-10">Sucursales</NuxtLink>
+            Sucursales
           </q-item-section>
         </q-item>
-        <q-item clickable v-ripple>
+        <q-item clickable v-ripple  @click="link('/usuarios')">
           <q-item-section avatar>
             <q-icon name="people" class="text-primary" />
           </q-item-section>
           <q-item-section>
-            <NuxtLink href="/usuarios" class="q-ml-md no-decoration text-grey-10">Colaboradores</NuxtLink>
+            Colaboradores
           </q-item-section>
         </q-item>
         <!-- Agrega más elementos de menú aquí -->
@@ -78,12 +70,21 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 const router = useRouter()
+const route = useRoute();
 
 const verPerfil = () => {
   router.push('/perfil')
 }
 
+const link = (url: string) => {
+  console.log(route)
+  console.log(url)
+  router.push(url)
+}
+
 const closeSession = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
   router.push('/access/login')
 }
 

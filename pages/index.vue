@@ -31,7 +31,7 @@
   import { useQuasar } from 'quasar';
   import { getGenericServices } from '~/services/genericServices';
   import type { Sucursal } from '~/interfaces/Sucursal';
-import type { GenericServicesResponse } from '~/interfaces/GenericServicesResponse';
+  import type { GenericServicesResponse } from '~/interfaces/GenericServicesResponse';
   const text = ref('');
   const router = useRouter();
   const $q = useQuasar();
