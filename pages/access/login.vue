@@ -1,6 +1,6 @@
 <template lang="">
     <section>
-        <q-input outlined class="q-ma-md bg-white" style="border-radius:5px" v-model="email" label="Email *" />
+        <q-input outlined class="q-ma-md bg-white" style="border-radius:5px" v-model="email" label="Usuario *" />
         <q-input outlined class="q-ma-md bg-white" style="border-radius:5px" v-model="password" label="Password *" type="password" />
         <!-- <NuxtLink href="/access/forgetpassword" class="q-ml-md text-white no-decoration">Olvide la contraseña</NuxtLink> -->
         <NuxtLink href="/access/register" class="q-ml-md text-white no-decoration">Registrarse</NuxtLink>
@@ -15,11 +15,12 @@ import { useQuasar } from 'quasar';
 const email = ref('')
 const password = ref('')
 const $q = useQuasar();
+const router = useRouter();
 definePageMeta({
     layout:'auth'
 })
 
-const login = () => {
+const login = async () => {
     if(!email.value || !password.value){
         $q.notify({
             color: 'red',
@@ -32,27 +33,36 @@ const login = () => {
         username: email.value,
         password: password.value
     }
-    useFetch(base_api + '/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    }).then((response) => {
-        console.log(response)
-        $q.notify({
-            color: 'green',
-            message: 'Inicio de sesion exitoso',
-            position: 'top'
+    try {
+        $q.loading.show()
+        const response = await fetch(base_api + '/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         })
-    }).catch((error) => {
+        const res = await response.json()
+        if(response.status === 200){
+            localStorage.setItem('token', res.token)
+            localStorage.setItem('user', JSON.stringify(res.user))
+            router.push('/')
+        }else{
+            $q.notify({
+                color: 'red',
+                message: 'Usuario o contraseña incorrectos',
+                position: 'top'
+            })
+        }
+    } catch (error) {
         $q.notify({
             color: 'red',
             message: 'Error al iniciar sesion',
             position: 'top'
         })
-    })
-    console.log(email.value, password.value)
+    } finally {
+        $q.loading.hide()
+    }
 }
 </script>
 <style lang="">

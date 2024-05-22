@@ -43,7 +43,6 @@ const slide = ref(0);
 
 <template>
   <section class="bg-white grid-autoColumns">
-    <pre>{{ props.loading }}</pre>
     <div class="" v-for="(itm,index) in citas" style=" width: 100%;">
       <card-status-await :loading="props.loading" class="col-6" />
     </div>

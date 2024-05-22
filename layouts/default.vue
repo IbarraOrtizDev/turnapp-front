@@ -57,6 +57,14 @@
             <NuxtLink href="/sucursales" class="q-ml-md no-decoration text-grey-10">Sucursales</NuxtLink>
           </q-item-section>
         </q-item>
+        <q-item clickable v-ripple>
+          <q-item-section avatar>
+            <q-icon name="people" class="text-primary" />
+          </q-item-section>
+          <q-item-section>
+            <NuxtLink href="/usuarios" class="q-ml-md no-decoration text-grey-10">Colaboradores</NuxtLink>
+          </q-item-section>
+        </q-item>
         <!-- Agrega más elementos de menú aquí -->
       </q-list>
     </q-drawer>
