@@ -86,3 +86,47 @@ export async function postGenericServices<T>(url = '', body = {}) : Promise<Gene
         }
     }
 }
+
+export async function patchGenericServices<T>(url = '', body = {}) : Promise<GenericServicesResponse<T>> {
+    try {
+        const token = localStorage.getItem('token');
+        if(!token){
+            return {
+                status: 401,
+                data: null
+            }
+        }
+        const response = await fetch(base_api + '/' + url, {
+            method: 'PATCH',
+            headers:{
+                "Content-Type": "application/json",
+                "Authorization": "Token " + token
+            },
+            body: JSON.stringify(body)
+        });
+        if(response.status === 401){
+            return {
+                status: 401,
+                data: null
+            }
+        }
+
+        if(response.status !== 200){
+            return {
+                status: response.status,
+                data: null
+            }
+        }
+
+        const data = await response.json();
+        return {
+            status: response.status,
+            data
+        }
+    } catch (error) {
+        return {
+            status: 500,
+            data: null
+        }
+    }
+}

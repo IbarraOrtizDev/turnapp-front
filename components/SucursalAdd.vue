@@ -74,7 +74,8 @@
 
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="warning" v-close-popup />
-          <q-btn flat label="Crear" color="primary" @click="createSucursal" />
+          <q-btn flat label="Crear" v-if="!props.isEdit" color="primary" @click="createSucursal" />
+          <q-btn flat label="Actualizar" v-else="!props.isEdit" color="primary" @click="createSucursal" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -85,8 +86,19 @@
 </template>
 <script setup>
 import { useQuasar } from 'quasar';
-import { postGenericServices } from '~/services/genericServices';
-const emit = defineEmits(['listSucursales'])
+import { postGenericServices, patchGenericServices } from '~/services/genericServices';
+const emit = defineEmits(['listSucursales', 'closeModal'])
+const props = defineProps({
+  isEdit: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
+    sucursalEdit: {
+        type: Object,
+        default: () => ({})
+    }
+})
 const alert = ref(false)
 const $q = useQuasar();
 const sucursal = reactive({
@@ -131,8 +143,8 @@ const createSucursal = async () => {
         })
         return
     }
-
-    if(transformTime(sucursal.lunes_apertura) >= transformTime(sucursal.lunes_cierre) || transformTime(sucursal.martes_apertura) >= transformTime(sucursal.martes_cierre) || transformTime(sucursal.miercoles_apertura) >= transformTime(sucursal.miercoles_cierre) || transformTime(sucursal.jueves_apertura) >= transformTime(sucursal.jueves_cierre) || transformTime(sucursal.viernes_apertura) >= transformTime(sucursal.viernes_cierre) || transformTime(sucursal.sabado_apertura) >= transformTime(sucursal.sabado_cierre) || transformTime(sucursal.domingo_apertura) >= transformTime(sucursal.domingo_cierre)){
+    debugger
+    if(transformTime(sucursal.lunes_apertura) >= transformTime(sucursal.lunes_cierre) || transformTime(sucursal.martes_apertura) >= transformTime(sucursal.martes_cierre) || transformTime(sucursal.miercoles_apertura) >= transformTime(sucursal.miercoles_cierre) || transformTime(sucursal.jueves_apertura) >= transformTime(sucursal.jueves_cierre) || transformTime(sucursal.viernes_apertura) >= transformTime(sucursal.viernes_cierre) || transformTime(sucursal.sabado_apertura) >= transformTime(sucursal.sabado_cierre) || transformTime(sucursal.domingo_apertura) > transformTime(sucursal.domingo_cierre)){
         $q.notify({
             color: 'red',
             message: 'La hora de apertura no puede ser mayor o igual a la hora de cierre',
@@ -140,23 +152,18 @@ const createSucursal = async () => {
         })
         return
     }
+    if(props.isEdit){
+        await update()
+    }else{
+        await create()
+    }
+    
+}
+const create = async () => {
     $q.loading.show()
     const response = await postGenericServices('sucursales', sucursal);
     $q.loading.hide()
-    if(response.status === 401){
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        router.push('/access/login')
-        return;
-    }
-    if(response.status !== 201){
-        $q.notify({
-            color: 'red',
-            message: 'Error al crear la sucursal',
-            position: 'top'
-        })
-        return
-    }
+    if(!statusResponse(response)) return
     $q.notify({
         color: 'green',
         message: 'Sucursal creada exitosamente',
@@ -165,6 +172,49 @@ const createSucursal = async () => {
     alert.value = false
     emit('listSucursales')
 }
+const update = async ()=> {
+    const dat = {...sucursal, id: props.sucursalEdit.id}
+    $q.loading.show()
+    const response = await patchGenericServices('sucursales', dat);
+    $q.loading.hide()
+    if(!statusResponse(response)) return
+    $q.notify({
+        color: 'green',
+        message: 'Sucursal actualizada exitosamente',
+        position: 'top'
+    })
+    alert.value = false
+    emit('listSucursales')
+}
+
+const statusResponse = (response) => {
+    if(response.status === 401){
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        router.push('/access/login')
+        return false;
+    }
+    if(response.status === 403){
+        $q.notify({
+            color: 'red',
+            message: 'No tiene permisos para ejecutar esta accion',
+            position: 'top'
+        })
+        return false;
+    }
+    if( ![200,201].includes(response.status)){
+        $q.notify({
+            color: 'red',
+            message: 'Error al ejecutar esta acción',
+            position: 'top'
+        })
+        return false
+    }
+    return true
+}
+
+
+
 const openModal = () => {
     alert.value = true
 }
@@ -172,6 +222,57 @@ const transformTime = (time) => {
     const fechaActual = new Date().toISOString().split('T')[0]
     return new Date(fechaActual + ' ' + time.replaceAll('.', '')).getTime()
 }
+watch(()=> props.sucursalEdit, (value) => {
+    if(value){
+        alert.value = true
+    }
+})
+watch(() => alert.value, (value) => {
+    if(!alert.value){
+        emit('closeModal')
+    };
+    if(props.isEdit){
+        sucursal.nombre = props.sucursalEdit.nombre
+        sucursal.direccion = props.sucursalEdit.direccion
+        sucursal.telefono = props.sucursalEdit.telefono
+        sucursal.email = props.sucursalEdit.email
+        sucursal.lunes_apertura = props.sucursalEdit.lunes_apertura
+        sucursal.lunes_cierre = props.sucursalEdit.lunes_cierre
+        sucursal.martes_apertura = props.sucursalEdit.martes_apertura
+        sucursal.martes_cierre = props.sucursalEdit.martes_cierre
+        sucursal.miercoles_apertura = props.sucursalEdit.miercoles_apertura
+        sucursal.miercoles_cierre = props.sucursalEdit.miercoles_cierre
+        sucursal.jueves_apertura = props.sucursalEdit.jueves_apertura
+        sucursal.jueves_cierre = props.sucursalEdit.jueves_cierre
+        sucursal.viernes_apertura = props.sucursalEdit.viernes_apertura
+        sucursal.viernes_cierre = props.sucursalEdit.viernes_cierre
+        sucursal.sabado_apertura = props.sucursalEdit.sabado_apertura
+        sucursal.sabado_cierre = props.sucursalEdit.sabado_cierre
+        sucursal.domingo_apertura = props.sucursalEdit.domingo_apertura
+        sucursal.domingo_cierre = props.sucursalEdit.domingo_cierre
+        sucursal.tiempo_por_usuario = props.sucursalEdit.tiempo_por_usuario
+    }else{
+        sucursal.nombre = ''
+        sucursal.direccion = ''
+        sucursal.telefono = ''
+        sucursal.email = ''
+        sucursal.lunes_apertura = ''
+        sucursal.lunes_cierre = ''
+        sucursal.martes_apertura = ''
+        sucursal.martes_cierre = ''
+        sucursal.miercoles_apertura = ''
+        sucursal.miercoles_cierre = ''
+        sucursal.jueves_apertura = ''
+        sucursal.jueves_cierre = ''
+        sucursal.viernes_apertura = ''
+        sucursal.viernes_cierre = ''
+        sucursal.sabado_apertura = ''
+        sucursal.sabado_cierre = ''
+        sucursal.domingo_apertura = ''
+        sucursal.domingo_cierre = ''
+        sucursal.tiempo_por_usuario = ''
+    }
+})
 </script>
 <style lang="">
     

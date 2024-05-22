@@ -52,12 +52,13 @@
             </div>
           </q-card-actions>
           <q-card-actions align="right">
+            <q-btn @click="editSucursal(suc.id)" flat round color="primary" icon="edit" />
             <q-btn @click="viewCalendar(suc.id)" flat round color="primary" icon="event" />
           </q-card-actions>
         </q-card>
       </section>
     </article>
-    <SucursalAdd @listSucursales="listSucursales" />
+    <SucursalAdd @listSucursales="listSucursales" @closeModal="edit = false" :isEdit="edit" :sucursalEdit="dataEdit" />
   </section>
 </template>
 <script setup lang="ts">
@@ -70,15 +71,21 @@ const token = ref('')
 const sucursales = ref<Sucursal[]>([])
 const $q = useQuasar();
 const router = useRouter();
-console.log(token)
+const edit = ref(false)
 const data = ref([
   { name: 'Ali', age: 25 },
   { name: 'Can', age: 16 },
   { name: 'Ebru', age: 19 }
 ])
+const dataEdit = ref<Sucursal>()
 const viewCalendar = (id:number)=>
 {
   router.push('/cita/'+id)
+}
+
+const editSucursal = (id:number) => {
+  dataEdit.value = sucursales.value.find(suc => suc.id === id)
+  edit.value = true
 }
 
 onMounted(async () => {
