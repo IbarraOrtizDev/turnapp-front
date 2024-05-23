@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
-import type { StatusApploinment } from '~/interfaces/StatusApploinment';
+import type { Cita } from '~/interfaces/Cita';
 const props = defineProps({
   loading: {
     type: Boolean,
@@ -9,47 +9,24 @@ const props = defineProps({
   icons: {
     type: Boolean,
     default: ()=> true,
+  },
+  finalizada : {
+    type: Boolean,
+    default: ()=> false,
+  },
+  citas: {
+    type: Array as () => Cita[],
+    required: true
   }
 })
-const citas = ref<StatusApploinment[]>([
-  {
-    id: 1,
-    name: 'Cita 1',
-    date: '2021-10-10',
-    time: '10:00',
-    status: 'pending'
-  },
-  {
-    id: 2,
-    name: 'Cita 2',
-    date: '2021-10-10',
-    time: '10:00',
-    status: 'pending'
-  },
-  {
-    id: 3,
-    name: 'Cita 3',
-    date: '2021-10-10',
-    time: '10:00',
-    status: 'pending'
-  },
-  {
-    id: 4,
-    name: 'Cita 3',
-    date: '2021-10-10',
-    time: '10:00',
-    status: 'pending'
-  }
-]);
-
 const dividir = computed(() => {
-  return citas.value.map((itm:StatusApploinment, i) => {
+  return props.citas.map((itm:Cita, i) => {
     const acc = [];
     if ((i+1) % 2 === 0) {
-      acc.push(citas.value[i-1]);
+      acc.push(props.citas[i-1]);
       acc.push(itm);
     }
-    if((citas.value.length-1) === i && citas.value.length % 2 !== 0){
+    if((props.citas.length-1) === i && props.citas.length % 2 !== 0){
       acc.push(itm);
     }
     return acc;
@@ -60,24 +37,38 @@ const slide = ref(0);
 </script>
 
 <template>
-  <q-carousel
-    v-model="slide"
-    transition-prev="slide-right"
-    transition-next="slide-left"
-    swipeable
-    animated
-    control-color="primary"
-    navigation
-    padding
-    arrows
-    :height="props.icons ? '250px' : '200px'"
-  >
-    <q-carousel-slide v-for="(itm,index) in dividir"  :name="index" class="column no-wrap justify-center" style="align-items: center;" >
-      <div class="row wrap" style="flex-wrap: nowrap; width: 100%;">
-        <card-status-await :icons="props.icons" :loading="props.loading" v-for="it in itm" class="col-6" />
-      </div>
-    </q-carousel-slide>
-  </q-carousel>
+  <div v-if="props.finalizada" class="bg-white grid-autoColumns">
+    <div class="" v-for="(itm,index) in citas" style=" width: 100%;">
+      <card-status-await :cita="itm" :icons="false" :loading="false" class="col-6" />
+    </div>
+  </div>
+  <div v-else>
+    <q-carousel
+      v-model="slide"
+      transition-prev="slide-right"
+      transition-next="slide-left"
+      swipeable
+      animated
+      control-color="primary"
+      navigation
+      padding
+      arrows
+      :height="props.icons ? '250px' : '200px'"
+    >
+      <q-carousel-slide v-for="(itm,index) in dividir"  :name="index" class="column no-wrap justify-center" style="align-items: center;" >
+        <div class="row wrap" style="flex-wrap: nowrap; width: 100%;">
+          <card-status-await :icons="props.icons" :loading="props.loading" v-for="it in itm"  :cita="it" class="col-6" />
+        </div>
+      </q-carousel-slide>
+    </q-carousel>
+  </div>
+
 </template>
 
-<style scoped></style>
+<style scoped>
+.grid-autoColumns {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1px;
+}
+</style>

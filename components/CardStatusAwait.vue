@@ -11,14 +11,14 @@
           />
         </q-item-section>
         <q-item-section>
-          <q-item-label class="text-subtitle1">Sisben</q-item-label>
+          <q-item-label class="text-subtitle1">{{props.cita.sucursal.nombre}}</q-item-label>
           <q-item-label class="flex" caption>
             <q-icon name="event" class="q-mr-xs" />
-            <div><b>Fecha:</b> 18-09-2024</div>
+            <div><b>Fecha:</b> {{ props.cita.fecha_hora.split('T')[0] }}</div>
           </q-item-label>
           <q-item-label caption>
             <q-icon name="access_alarms" class="q-mr-xs" />
-            <b>Hora Aproximada:</b> 03:00</q-item-label>
+            <b>Hora Aproximada:</b> {{ new Date(props.cita.fecha_hora).toLocaleTimeString() }}</q-item-label>
           <q-item-label v-if="props.icons" caption class="flex q-pt-md">
             <q-btn flat color="purple" round icon="person" class="q-ml-md">
               <q-badge color="red" floating>4</q-badge>
@@ -39,7 +39,10 @@
       </q-card>
     </q-card-section>
 </template>
-<script setup>
+<script lang="ts" setup>
+
+import type { Cita } from '~/interfaces/Cita';
+
 const props = defineProps({
   loading: {
     type: Boolean,
@@ -48,6 +51,10 @@ const props = defineProps({
   icons: {
     type: Boolean,
     default: () => true
+  },
+  cita:{
+    type: Object as () => Cita,
+    required: true
   }
 })
 </script>
