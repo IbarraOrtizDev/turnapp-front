@@ -65,7 +65,7 @@
             <q-item-section>Colaboradores</q-item-section>
           </q-item>
         </NuxtLink>
-        <NuxtLink v-if="tipo_usuario != 'Medico' && tipo_usuario != 'Médico'" href="/usuarios" class="no-decoration text-grey-10">
+        <NuxtLink v-if="tipo_usuario != 'Medico' && tipo_usuario != 'Médico'" href="/proceso" class="no-decoration text-grey-10">
           <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="people" class="text-primary" />
