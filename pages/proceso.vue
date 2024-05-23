@@ -33,13 +33,22 @@
         </div>
     </q-page>
 </template>
-<script setup>
+<script lang="ts" setup>
+import { useQuasar } from 'quasar';
+import type { Cita } from '~/interfaces/Cita';
+import type { Sucursal } from '~/interfaces/Sucursal';
+import { getGenericServices } from '~/services/genericServices';
+
+const citas = ref<Cita[]>([]);
+const sucursal = ref<Sucursal[]>([]);
+const router = useRouter();
+const $q = useQuasar();
 const headers = ref([
-    { name: 'id', align: 'left', label: '#', field: row => row.id},
-    { name: 'Paciente', align: 'left', label: 'Paciente', field: row => row.paciente },
-    { name: 'Cedula', align: 'left', label: 'Cedula', field: row => row.cedula },
-    { name: 'Telefono', align: 'left', label: 'Telefono', field: row => row.telefono },
-    { name: 'Acciones', align: 'center', label: 'Acciones', field: row => row.acciones }
+    { name: 'id', align: 'left', label: '#', field: (row: { id: any; }) => row.id},
+    { name: 'Paciente', align: 'left', label: 'Paciente', field: (row: { paciente: any; }) => row.paciente },
+    { name: 'Cedula', align: 'left', label: 'Cedula', field: (row: { cedula: any; }) => row.cedula },
+    { name: 'Telefono', align: 'left', label: 'Telefono', field: (row: { telefono: any; }) => row.telefono },
+    { name: 'Acciones', align: 'center', label: 'Acciones', field: (row: { acciones: any; }) => row.acciones }
 ]);
 const data = ref([
     {
@@ -72,7 +81,54 @@ const data = ref([
     
     }
 ])
+
+onMounted(async () => {
+  // await getSucursal();
+  await getListCitas();
+});
+
+const getListCitas = async () => {
+  $q.loading.show();
+  const data = await getGenericServices<Cita>('citasn');
+  const hoyInicio = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime();
+  const hoyFin = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()} 23:59:59`).getTime();
+  $q.loading.hide();
+  if(data.status === 200){
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if(Object.keys(user).length === 0) router.push('/login');
+    if (data.data) {
+      citas.value = data.data.filter(x=> hoyInicio <= new Date(x.fecha_hora).getTime() && hoyFin >= new Date(x.fecha_hora).getTime() && x.medico_id === user.id)
+                             .sort((a,b)=> a.id - b.id)
+    }
+  }else{
+    $q.notify({
+      color: 'negative',
+      message: 'Error al obtener las citas',
+      position: 'top',
+      timeout: 2000
+    });
+  }
+}
+
+const getSucursal = async () => {
+  $q.loading.show();
+  const data = await getGenericServices<Sucursal>('sucursales');
+  $q.loading.hide();
+  if(data.status === 200){
+    if (data.data) {
+      sucursal.value = data.data;
+    }
+    console.log(data.data);
+  }else{
+    $q.notify({
+      color: 'negative',
+      message: 'Error al obtener las sucursales',
+      position: 'top',
+      timeout: 2000
+    });
+  }
+}
 </script>
 <style lang="">
-    
+  
 </style>

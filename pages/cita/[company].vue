@@ -4,7 +4,7 @@
             <LateralCita :sucursal="sucursal" />
         </section>
         <section class="">
-            <CalendarioCitas @separarEspacio="separarEspacio"/>
+            <CalendarioCitas :numMedicos="empleados.length * (sucursal?.tiempo_por_usuario || 0)" :citas="citas" @separarEspacio="separarEspacio"/>
         </section>
         <q-dialog v-model="alert" persistent>
             <q-card style="max-width:500px;width:100%">
@@ -26,7 +26,7 @@
                     <q-btn flat label="Crear" color="primary" @click="completeCita" />
                 </q-card-actions>
             </q-card>
-        </q-dialog>
+        </q-dialog>        
     </q-page>
 </template>
 <script lang="ts" setup>
@@ -35,6 +35,7 @@ import type { Sucursal } from '~/interfaces/Sucursal';
 import { useQuasar } from 'quasar';
 import type { CreateCita } from '~/interfaces/Cita';
 import type { Usuario } from '~/interfaces/Usuario';
+import type { Cita } from '~/interfaces/Cita';
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
@@ -79,6 +80,7 @@ const capacidad = reactive({
 const tiempoUsuarios = ref(0);
 const alert = ref(false);
 const empleados = ref<Usuario[]>([]);
+const citas = ref<Cita[]>([]);
 
 const dataCreateCita = reactive<CreateCita>({
     estado: 'Pendiente',
@@ -101,6 +103,7 @@ const separarEspacio = (fecha: any) => {
         })
         return;
     }
+
     alert.value = true;
     dataCreateCita.fecha_hora = `${fecha.anio}-${fecha.mes.toString().padStart(2,'0')}-${fecha.dia.toString().padStart(2,'0')} 00:00`;
 }
@@ -115,7 +118,19 @@ const completeCita = async () => {
         return;
     }
 
+    const fechaTiempo = new Date(dataCreateCita.fecha_hora.split(' ')[0]).getTime();
     const profile = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if(citas.value.filter(x=> new Date(x.fecha_hora).getTime() === fechaTiempo && x.paciente_id == profile.id).length){
+        $q.notify({
+            color: 'red',
+            message: 'Ya tienes una cita agendada para este dia',
+            position: 'top'
+        })
+        return;
+    }
+
+    
     if(profile.id === undefined){
         router.push('/access/login')
         return;
@@ -128,6 +143,8 @@ const completeCita = async () => {
         medico_id: dataCreateCita.medico_id.value,
         tipo_cita: dataCreateCita.tipo_cita,
     }
+
+
     
     postGenericServices('citas', dataSend).then((res) => {
         if(res.status === 401){
@@ -150,9 +167,31 @@ const completeCita = async () => {
             position: 'top'
         })
         alert.value = false;
+        getListCitas();
     });
 }
 
+const getListCitas = async () => {
+  $q.loading.show();
+  const data = await getGenericServices<Cita>('citasn');
+  const hoyInicio = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`).getTime();
+  const hoyFin = new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()} 23:59:59`).getTime();
+  $q.loading.hide();
+  if(data.status === 200){
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if(Object.keys(user).length === 0) router.push('/login');
+    if (data.data) {
+      citas.value = data.data.filter(x=> x.id_sucursal === parseInt(route.params.company.toString()))
+    }
+  }else{
+    $q.notify({
+      color: 'negative',
+      message: 'Error al obtener las citas',
+      position: 'top',
+      timeout: 2000
+    });
+  }
+}
 
 const consultaSucursal = () => {
     getGenericServices<Sucursal>('sucursales?id='+route.params.company).then((res) => {
@@ -204,7 +243,9 @@ const consultaSucursal = () => {
     });
 }
 const getEmpleados = () => {
+    $q.loading.show();
     getGenericServices<Usuario>('empleados').then((res) => {
+        $q.loading.hide();
         if(res.status === 401){
             localStorage.removeItem('token')
             localStorage.removeItem('user')
@@ -250,6 +291,7 @@ watch(tiempoUsuarios, (value) => {
     capacidadByDay('sabado');
     capacidadByDay('domingo');
 })
+
 const capacidadByDay = (dia : string) => {
     const day = (capacidad as { [key: string]: { apertura: string; cierre: string; capacidad: number } })[dia];
     const inicio = new Date(new Date().toDateString() + ' ' + day.apertura).getTime();
@@ -271,9 +313,10 @@ const medicosComputed = computed(() => {
     }) || [];
 })
 
-onMounted(() => {
-    consultaSucursal();
-    getEmpleados();
+onMounted(async () => {
+    await getListCitas();
+    await consultaSucursal();
+    await getEmpleados();
 })
 </script>
 <style>
