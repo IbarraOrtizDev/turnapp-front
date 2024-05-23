@@ -49,7 +49,7 @@
             <q-item-section>Citas</q-item-section>
           </q-item>
         </NuxtLink>
-        <NuxtLink v-if="tipo_usuario != 'afiliado'" href="/sucursales" class="no-decoration text-grey-10">
+        <NuxtLink v-if="tipo_usuario != 'afiliado' && tipo_usuario != 'Medico' && tipo_usuario != 'Médico'" href="/sucursales" class="no-decoration text-grey-10">
           <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="local_hospital" class="text-primary" />
@@ -57,7 +57,7 @@
             <q-item-section>Sucursales</q-item-section>
           </q-item>
         </NuxtLink>
-        <NuxtLink v-if="tipo_usuario != 'afiliado'" href="/usuarios" class="no-decoration text-grey-10">
+        <NuxtLink v-if="tipo_usuario != 'afiliado' && tipo_usuario != 'Medico' && tipo_usuario != 'Médico'" href="/usuarios" class="no-decoration text-grey-10">
           <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="people" class="text-primary" />

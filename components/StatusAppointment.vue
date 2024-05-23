@@ -9,7 +9,6 @@ const props = defineProps({
   icons: {
     type: Boolean,
     default: ()=> true,
-    required: true
   }
 })
 const citas = ref<StatusApploinment[]>([
