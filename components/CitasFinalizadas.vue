@@ -44,7 +44,7 @@ const slide = ref(0);
 <template>
   <section class="bg-white grid-autoColumns">
     <div class="" v-for="(itm,index) in citas" style=" width: 100%;">
-      <card-status-await :loading="props.loading" class="col-6" />
+      <card-status-await :icons="false" :loading="false" class="col-6" />
     </div>
   </section>
 </template>

@@ -19,7 +19,7 @@
           <q-item-label caption>
             <q-icon name="access_alarms" class="q-mr-xs" />
             <b>Hora Aproximada:</b> 03:00</q-item-label>
-          <q-item-label caption class="flex q-pt-md">
+          <q-item-label v-if="props.icons" caption class="flex q-pt-md">
             <q-btn flat color="purple" round icon="person" class="q-ml-md">
               <q-badge color="red" floating>4</q-badge>
               <q-tooltip>
@@ -44,6 +44,10 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false
+  },
+  icons: {
+    type: Boolean,
+    default: () => true
   }
 })
 </script>

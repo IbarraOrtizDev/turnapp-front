@@ -5,6 +5,11 @@ const props = defineProps({
   loading: {
     type: Boolean,
     required: false
+  },
+  icons: {
+    type: Boolean,
+    default: ()=> true,
+    required: true
   }
 })
 const citas = ref<StatusApploinment[]>([
@@ -66,11 +71,11 @@ const slide = ref(0);
     navigation
     padding
     arrows
-    height="250px"
+    :height="props.icons ? '250px' : '200px'"
   >
     <q-carousel-slide v-for="(itm,index) in dividir"  :name="index" class="column no-wrap justify-center" style="align-items: center;" >
       <div class="row wrap" style="flex-wrap: nowrap; width: 100%;">
-        <card-status-await :loading="props.loading" v-for="it in itm" class="col-6" />
+        <card-status-await :icons="props.icons" :loading="props.loading" v-for="it in itm" class="col-6" />
       </div>
     </q-carousel-slide>
   </q-carousel>
